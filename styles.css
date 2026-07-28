@@ -44,7 +44,83 @@ button, select { cursor: pointer; }
   overflow: hidden;
   background: #f7f8fa;
   box-shadow: 0 0 46px rgba(24, 36, 60, 0.16);
+  zoom: var(--user-zoom, 1);
 }
+
+body.zoomed-view {
+  overflow: auto;
+  place-items: start center;
+  padding: 12px 0 90px;
+}
+body.zoomed-view .app-shell { max-height: none; }
+
+.zoom-controls {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 100;
+  min-height: 48px;
+  padding: 5px;
+  display: grid;
+  grid-template-columns: 40px 42px 40px;
+  align-items: center;
+  gap: 3px;
+  border: 1px solid #cfdcf2;
+  border-radius: 16px;
+  color: #2f68cb;
+  background: rgba(255,255,255,.96);
+  box-shadow: 0 10px 26px rgba(24,36,60,.16);
+  backdrop-filter: blur(10px);
+}
+.zoom-button {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 11px;
+  display: grid;
+  place-items: center;
+  color: #2f68cb;
+  background: #eef4ff;
+}
+.zoom-button:disabled { opacity: .38; cursor: not-allowed; }
+.zoom-button:disabled:hover { transform: none; box-shadow: none; filter: none; }
+.zoom-value {
+  text-align: center;
+  color: #34405a;
+  font-size: 10px;
+  font-weight: 850;
+}
+.zoom-lens {
+  width: 18px;
+  height: 18px;
+  position: relative;
+  display: block;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+}
+.zoom-lens::after {
+  content: "";
+  width: 8px;
+  height: 2px;
+  position: absolute;
+  right: -6px;
+  bottom: -3px;
+  border-radius: 999px;
+  background: currentColor;
+  transform: rotate(45deg);
+}
+.zoom-lens::before {
+  position: absolute;
+  inset: -1px 0 0;
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 900;
+}
+.zoom-minus::before { content: "−"; }
+.zoom-plus::before { content: "+"; }
 
 .topbar {
   height: 56px;
@@ -324,6 +400,12 @@ button, select { cursor: pointer; }
   .content { width: calc(100% - 18px); }
   .identity-meta { display: none; }
   .role-select { max-width: 135px; }
+  .zoom-controls {
+    right: 8px;
+    bottom: 66px;
+    grid-template-columns: 36px 38px 36px;
+  }
+  .zoom-button { width: 36px; height: 36px; }
 }
 
 /* Keep the complete app visible when the browser panel is shorter than a phone. */

@@ -4,10 +4,16 @@ const members = [
   ["DR", "Dr. Rao · Professional", "Care coordinator", "Recommends a short safety check before escalation."],
 ];
 
+const zoomSteps = [0.85, 1, 1.15, 1.3];
 let currentRole = "Family member";
 let settings = [true, true, false];
 let vote = null;
 let parentCallState = "ready";
+let userZoom = 1;
+try {
+  const savedZoom = Number(localStorage.getItem("careconnectZoom"));
+  if (zoomSteps.includes(savedZoom)) userZoom = savedZoom;
+} catch {}
 let chatMessages = [
   { initials: "FM", name: "Maya · Family", time: "10:24", text: "I called twice but Eleanor did not answer. Has anyone seen her this morning?", tone: "family" },
   { initials: "MC", name: "Mei · Community Care", time: "10:25", text: "I visited at 9:50. The curtains were open and I heard the radio inside.", tone: "community" },
@@ -20,6 +26,18 @@ function intro(eyebrow, title, subtitle) {
 
 function button(label, href, kind = "primary") {
   return `<a class="button ${kind}" href="#${href}">${label}</a>`;
+}
+
+function applyUserZoom() {
+  document.documentElement.style.setProperty("--user-zoom", String(userZoom));
+  document.body.classList.toggle("zoomed-view", userZoom > 1);
+  const value = document.getElementById("zoom-value");
+  if (value) value.textContent = `${Math.round(userZoom * 100)}%`;
+  const index = zoomSteps.indexOf(userZoom);
+  const out = document.querySelector('[data-zoom="out"]');
+  const incoming = document.querySelector('[data-zoom="in"]');
+  if (out) out.disabled = index === 0;
+  if (incoming) incoming.disabled = index === zoomSteps.length - 1;
 }
 
 function memberList() {
@@ -211,8 +229,14 @@ function render() {
     <select class="role-select" id="role-select" aria-label="Viewing role">${["Family member","Community care","Professional caregiver"].map(x=>`<option ${x===currentRole?"selected":""}>${x}</option>`).join("")}</select></header>
     <main class="content page-${current === "/" ? "home" : current.slice(1)}">${pages[current]()}</main>
     <nav class="mobile-nav">${nav.map(n=>`<a href="#${n[0]}" class="nav-item ${activeRoute===n[0]?"active":""}"><span class="nav-icon">${n[1]}</span><span>${n[2]}</span></a>`).join("")}</nav>
+  </div>
+  <div class="zoom-controls" role="group" aria-label="Page zoom controls">
+    <button class="zoom-button" type="button" data-zoom="out" aria-label="Zoom out" title="Zoom out"><span class="zoom-lens zoom-minus" aria-hidden="true"></span></button>
+    <span class="zoom-value" id="zoom-value" aria-live="polite">${Math.round(userZoom * 100)}%</span>
+    <button class="zoom-button" type="button" data-zoom="in" aria-label="Zoom in" title="Zoom in"><span class="zoom-lens zoom-plus" aria-hidden="true"></span></button>
   </div>`;
 
+  applyUserZoom();
   document.getElementById("role-select").addEventListener("change", (e) => { currentRole = e.target.value; });
   document.querySelectorAll("[data-toggle]").forEach((el) => el.addEventListener("click", () => {
     const i = Number(el.dataset.toggle); settings[i] = !settings[i]; render();
@@ -253,6 +277,15 @@ function render() {
     parentCallState = parentCallState === "calling" ? "ready" : "calling";
     render();
   });
+  document.querySelectorAll("[data-zoom]").forEach((control) => control.addEventListener("click", () => {
+    const currentIndex = zoomSteps.indexOf(userZoom);
+    const nextIndex = control.dataset.zoom === "in"
+      ? Math.min(zoomSteps.length - 1, currentIndex + 1)
+      : Math.max(0, currentIndex - 1);
+    userZoom = zoomSteps[nextIndex];
+    try { localStorage.setItem("careconnectZoom", String(userZoom)); } catch {}
+    applyUserZoom();
+  }));
 }
 
 window.addEventListener("hashchange", render);
