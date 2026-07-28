@@ -4,7 +4,7 @@ const members = [
   ["DR", "Dr. Rao · Professional", "Care coordinator", "Recommends a short safety check before escalation."],
 ];
 
-const zoomSteps = [0.85, 1, 1.15, 1.3];
+const zoomSteps = [0.85, 1, 1.15, 1.3, 1.5, 1.8];
 let currentRole = "Family member";
 let settings = [true, true, false];
 let vote = null;
