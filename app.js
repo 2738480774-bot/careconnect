@@ -62,7 +62,7 @@ let subscription = {
 };
 
 function intro(eyebrow, title, subtitle) {
-  return `<div class="eyebrow">${eyebrow}</div><h1 class="page-title">${title}</h1><p class="page-subtitle">${subtitle}</p>`;
+  return `<div class="eyebrow">${eyebrow}</div><h1 class="page-title">${title}</h1>${subtitle ? `<p class="page-subtitle">${subtitle}</p>` : ""}`;
 }
 
 function button(label, href, kind = "primary") {
@@ -94,12 +94,7 @@ function memberList() {
 
 function familyHome() {
   return `
-    ${intro("Tuesday · 10:28 AM", "Good morning, Maya.", "Here is what is happening at Eleanor’s home.")}
-    <a class="card alert-banner" href="#/alert">
-      <span class="alert-icon">!</span>
-      <span class="alert-copy"><strong>Unusual inactivity detected</strong><span>Living room · Detected 6 minutes ago · Review recommended</span></span>
-      <span class="arrow-link">Review alert →</span>
-    </a>
+    ${intro("Tuesday · 10:28 AM", "Good morning, Maya.", "")}
     <section class="card room-card">
       <h2 class="section-title">Home status</h2>
       <div class="room-visual"><img class="room-photo" src="${window.HOME_IMAGE}" alt="An older woman reading safely in her living room"><span class="live-badge">SENSORS ONLINE</span></div>
@@ -110,8 +105,11 @@ function familyHome() {
         <a class="device" href="#/door-sensor"><span class="device-icon">↔</span><strong>Door sensor</strong><small>Activity · view</small></a>
       </div>
     </section>
-    <section class="card risk-strip">
-      <div><span class="eyebrow">Current risk</span><strong class="risk-score">82%</strong> <span class="risk-tag">High risk · review now</span></div>
+    <section class="card risk-strip urgent-risk-strip">
+      <div class="risk-emergency">
+        <span class="risk-urgent-icon">!</span>
+        <div class="risk-main"><div><span class="eyebrow">Current risk</span><strong class="risk-score">82%</strong></div><strong class="risk-critical-label">HIGH RISK · ACTION NEEDED</strong><small class="risk-reason">Unusual inactivity detected 6 minutes ago</small></div>
+      </div>
       <div class="risk-actions">${button("See why →", "/alert")} ${button("Open Care Circle", "/care-circle", "soft")}</div>
     </section>
     <a class="sos" href="#/emergency"><span class="sos-circle">SOS</span><span><strong>Emergency call</strong><small>Get immediate help and notify the Care Circle</small></span><span>→</span></a>
@@ -190,6 +188,7 @@ function helperHome() {
       <div class="helper-alert-symbol">!</div>
       <h2>Older adult may need help</h2>
       <p>About 200 m away · North District</p>
+      <div class="helper-reward-teaser"><span>★</span> Help now and earn a reward</div>
       <a class="button danger helper-open-alert" href="#/response-map">View alert →</a>
       <a class="helper-dismiss" href="#/">Not now</a>
     </section>
@@ -288,7 +287,7 @@ function careCircle() {
           </aside>`
         : `<aside class="stack collective-decision">
             <section class="card consensus"><div class="eyebrow">Decision support</div><div class="consensus-score">${consensusScore}%</div><div class="consensus-change ${vote || ""}">${consensusChange}</div><div class="proposed-action"><span>VOTING ON</span><strong>Send Mei for an in-person safety check now</strong></div></section>
-            <section class="card panel poll-card"><h2 class="section-title">Vote on this action</h2><div class="poll-action">Send Mei for an in-person safety check now</div><div class="vote-row"><button class="vote-button agree-vote ${vote === "agree" ? "selected" : ""}" data-vote="agree">✓ Agree</button><button class="vote-button disagree-vote ${vote === "disagree" ? "selected" : ""}" data-vote="disagree">Need more context</button></div><div class="poll-count">${vote ? "4 of 4 responded" : "3 of 4 responded · your vote"}</div><div class="decision-readiness"><span class="${vote === "disagree" ? "hold" : ""}"></span><div><strong>${vote === "agree" ? "Action approved" : vote === "disagree" ? "Decision pending" : "Waiting for your vote"}</strong></div></div><div class="button-row">${button("Review decision →","/decision")}</div></section>
+            <section class="card panel poll-card"><h2 class="section-title">Vote on this action</h2><div class="vote-row"><button class="vote-button agree-vote ${vote === "agree" ? "selected" : ""}" data-vote="agree">✓ Agree</button><button class="vote-button disagree-vote ${vote === "disagree" ? "selected" : ""}" data-vote="disagree">Need more context</button></div><div class="poll-count">${vote ? "4 of 4 responded" : "3 of 4 responded · your vote"}</div><div class="decision-readiness"><span class="${vote === "disagree" ? "hold" : ""}"></span><div><strong>${vote === "agree" ? "Action approved" : vote === "disagree" ? "Decision pending" : "Waiting for your vote"}</strong></div></div><div class="button-row">${button("Review decision →","/decision")}</div></section>
           </aside>`}
     </div>`;
 }
